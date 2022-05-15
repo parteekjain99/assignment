@@ -119,7 +119,7 @@ const userLogin = async function(req,res){
            batch: "uranium",
            organisation: 'FunctionUp',
             iat: new Date().getTime() /1000 
-       },"My private key" ,{expiresIn:"1m"}
+       },"My private key" ,{expiresIn:"30m"}
            
        );
 
