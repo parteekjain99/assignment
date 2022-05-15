@@ -3,8 +3,6 @@ const jwt=require('jsonwebtoken')
 const userModel = require("../models/userModel")
 
 
-
-
 const isValid = function (value) {
     if (typeof value === "undefined" || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
@@ -28,11 +26,10 @@ const CreateUser = async function (req, res) {
         if (!isValid(title)) {
             return res.status(400).send({status: false, msg: "Enter Title " })
         }
-        // if(title){
             if(!["Mr","Mrs","Miss"].includes(title)){
                 return res.status(400).send({status: false,  msg: "Improper title" })
                 }
-        // }
+        
         if (!isValid(name)) {
             return res.status(400).send({status: false,  msg: "Enter Valid Name " })
         }
