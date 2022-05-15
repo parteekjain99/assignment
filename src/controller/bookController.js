@@ -116,13 +116,13 @@ const getBooks = async function (req, res) {
           return res.status(400).send({ status: false, msg: "userid not valid" })
       }
 
-  //     if (!isValid(category)) {
-  //       return res.status(400).send({ status: false, message: 'category is Required' });
-  //   }
+      if (!isValid(category)) {
+        return res.status(400).send({ status: false, message: 'category is Required' });
+    }
 
-  //   if (!isValid(subcategory)) {
-  //     return res.status(400).send({ status: false, message: 'subcategory is Required' });
-  // }
+    if (!isValid(subcategory)) {
+      return res.status(400).send({ status: false, message: 'subcategory is Required' });
+  }
 
       // filtering by query
       const filterdBooks = await bookModel.find({ $and: [{ isDeleted: false }, query] })
@@ -163,7 +163,7 @@ const getBookById = async (req, res) => {
   }
 }
 
-//updateBook
+//UpdateBook
 
 const updateBook = async function (req, res) {
     try {

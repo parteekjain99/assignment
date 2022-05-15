@@ -1,8 +1,5 @@
 const mongoose = require("mongoose")
 
-
-
-
 const isValidObjectId = (objectId) => {
     return mongoose.Types.ObjectId.isValid(objectId)
   };
@@ -18,7 +15,7 @@ const isValidObjectId = (objectId) => {
 
 
 
-  const isValidRequestBody = function (requestBody) {
+const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
 }
 

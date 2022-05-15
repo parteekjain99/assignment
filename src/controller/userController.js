@@ -1,23 +1,12 @@
-const UserModel = require("../models/userModel")
 const jwt=require('jsonwebtoken')
 const userModel = require("../models/userModel")
+const {isValid,isValidRequestBody} = require('../validations/validator')
 
-
-const isValid = function (value) {
-    if (typeof value === "undefined" || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true;
-}
-
-const isValidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0
-}
-
-
-
-const CreateUser = async function (req, res) {
+//User Registration
+const createUser = async function (req, res) {
     try {
         let user = req.body
+        //extracts params
         let { title, name, email, phone, password } = user
 
         if (!isValidRequestBody(user)) {
@@ -40,7 +29,7 @@ const CreateUser = async function (req, res) {
             return res.status(400).send({ status: false, message: `Email should be a valid email address` })
             
         }
-        const isemail = await UserModel.findOne({ email })
+        const isemail = await userModel.findOne({ email })
         if (isemail) {
             return res.status(400).send({status: false, msg: "Email.  is already used" })
         }
@@ -54,7 +43,7 @@ const CreateUser = async function (req, res) {
 
         }
         
-        const isphone = await UserModel.findOne({ phone })
+        const isphone = await userModel.findOne({ phone })
         if (isphone) {
             return res.status(400).send({status: false, msg: "Phone no.  is already used" })
         }
@@ -66,7 +55,7 @@ const CreateUser = async function (req, res) {
             return res.status(400).send({status: false, msg: "password length Min.8 - Max. 15" })
         }
 
-        const NewUsers = await UserModel.create(user)
+        const NewUsers = await userModel.create(user)
         return res.status(201).send({ Status: true, msg: "Data sucessfully Created", data: NewUsers })
 
     }
@@ -75,7 +64,7 @@ const CreateUser = async function (req, res) {
     }
 }
 
-
+//User Login
 const userLogin = async function(req,res){
     try {
        const requestBody= req.body;
@@ -129,5 +118,5 @@ const userLogin = async function(req,res){
 }
 
 
-module.exports= {CreateUser,userLogin}
+module.exports= {createUser,userLogin}
 
