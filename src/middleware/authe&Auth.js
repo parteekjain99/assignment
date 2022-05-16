@@ -51,8 +51,7 @@ const authorization = async (req, res, next) => {
       if (!bookData) return res.status(404).send({ status: false, message: "Error! Please check book id and try again" });
       userLogging = bookData.userId.toString();
     }
-
-    if (!userLogging) return res.status(400).send({ status: false, message: "User Id is required" });
+   if (!userLogging) return res.status(400).send({ status: false, message: "User Id is required" });
 
     if (loggedInUser !== userLogging) return res.status(403).send({ status: false, message: 'Error, authorization failed' })
     next()
