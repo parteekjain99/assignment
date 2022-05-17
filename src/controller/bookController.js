@@ -8,6 +8,7 @@ const{isValidObjectId,isValidRequestBody,isValid} = require('../validations/vali
 //=================CREATE BOOK =====================================
 const createBook = async (req, res) => {
 
+  
   try {
       // Extract body 
       const reqBody = req.body;
@@ -116,20 +117,13 @@ const getBooks = async function (req, res) {
           return res.status(400).send({ status: false, msg: "userid not valid" })
       }
 
-  //     if (!isValid(category)) {
-  //       return res.status(400).send({ status: false, message: 'category is Required' });
-  //   }
-
-  //   if (!isValid(subcategory)) {
-  //     return res.status(400).send({ status: false, message: 'subcategory is Required' });
-  // }
 
       // filtering by query
       const filterdBooks = await bookModel.find({ $and: [{ isDeleted: false }, query] })
           .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1, subcategory: 1 });
 
       if (!filterdBooks.length) {
-          return res.status(400).send({ status: false, msg: "No Book exist" })
+          return res.status(404).send({ status: false, msg: "No Book found" })
       }
       // sorting name  by Alphabitical
       const sortedBooks = filterdBooks.sort((a, b) => a.title.localeCompare(b.title))
@@ -166,55 +160,34 @@ const getBookById = async (req, res) => {
 //updateBook
 
 const updateBook = async function (req, res) {
-    try {
-      const bookId = req.params.bookId;
-      if (!bookId)
-        return res.status(404).send({ status: false, msg: "No Book Found" });
-      if (!isValid(bookId))
-        return res.status(404).send({ status: false, msg: "BookID invalid" });
+  try {
+      const bookId = req.params.bookId
   
-      const bookFound = await bookModel.findById(bookId);
-      if (bookFound.isDeleted === true) {
-        return res.status(404).send({ Status: "false", msg: "bookis deleted " });
+      const getBookById = await bookModel.findOne({ _id: bookId, isDeleted: false })
+      if (!getBookById) {
+          return res.status(404).send({ status: false, msg: "no book found to update" })
       }
-  
-      //*Extracts Param
-      const title = req.body.title;          
-      const  excerpt= req.body.excerpt;
-      const releasedate = req.body.releasedate;
-      const ISBN = req.body.ISBN;
-     
-  
-      if (title || excerpt|| releasedate || ISBN ) {
-        const updatedBook = await bookModel.findOneAndUpdate(
-          { _id: bookId },
-          {
-            title: title,
-            excerpt:excerpt,
-            releasedate:releasedate,
-            ISBN:ISBN,
-            
-           
-            isPublished: true,
-            publishedAt: new Date(),
-          },
-          { new: true }
-        );
-  
-        //*Validation
-        if (!updatedBook) return res.status(404).send({ msg: "Book not found" });
-        res
-          .status(200)
-          .send({ status: true, msg: "Updated successfully", data: updatedBook });
-      } else {
-        res.status(400).send({ msg: "data is required in body " });
+      const data = req.body
+      if (Object.keys(data) != 0) {
+          const duplicateTitle = await bookModel.findOne({ title: data.title });
+          if (duplicateTitle) {
+              return res.status(400).send({ status: false, message: "This book title already exists with another book" });
+          }
+          const duplicateISBN = await bookModel.findOne({ ISBN: data.ISBN })
+          if (duplicateISBN) {
+              return res.status(400).send({ status: false, message: "This ISBN number already exists with another book" });
+          }
+          const updatedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { ...data }, { new: true })
+          return res.status(202).send({ status: true, message: "successfull", data: updatedBook })
       }
-    } catch (err) {
-      res
-        .status(500)
-        .send({ status: false, msg: "server Error", err: err.message });
-    }
-  };
+      else {
+          return res.status(404).send({ status: false, message: "please provide required field to update" })
+      }
+  }
+  catch (err) {
+      return res.status(500).send({ status: false, message: err.message })
+  }
+}
   
 //----------------------DeleteBook ById---------------------------------------
 

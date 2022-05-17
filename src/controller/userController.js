@@ -1,4 +1,3 @@
-const UserModel = require("../models/userModel")
 const jwt=require('jsonwebtoken')
 const userModel = require("../models/userModel")
 
@@ -42,7 +41,7 @@ const CreateUser = async function (req, res) {
             return res.status(400).send({ status: false, message: `Email should be a valid email address` })
             
         }
-        const isemail = await UserModel.findOne({ email })
+        const isemail = await userModel.findOne({ email })
         if (isemail) {
             return res.status(400).send({status: false, msg: "Email.  is already used" })
         }
@@ -56,9 +55,13 @@ const CreateUser = async function (req, res) {
 
         }
         
-        const isphone = await UserModel.findOne({ phone })
+        const isphone = await userModel.findOne({ phone })
         if (isphone) {
             return res.status(400).send({status: false, msg: "Phone no.  is already used" })
+        }
+          
+        if (!password) {
+            return res.status(400).send({status: false, msg: "Password is required" })
         }
        
         if (!isValid(password.trim())) {
@@ -67,8 +70,9 @@ const CreateUser = async function (req, res) {
         if (!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password.trim()))) {
             return res.status(400).send({status: false, msg: "password length Min.8 - Max. 15" })
         }
-
-        const NewUsers = await UserModel.create(user)
+      
+        
+        const NewUsers = await userModel.create(user)
         return res.status(201).send({ Status: true, msg: "Data sucessfully Created", data: NewUsers })
 
     }
