@@ -7,8 +7,7 @@ const {
   isValid
 } = require("../validations/validator");
 
-//
-
+//create review
 
 const addReview = async (req, res) => {
   try {
@@ -36,15 +35,23 @@ const addReview = async (req, res) => {
     if (validString(data.reviewedBy) || validString(data.review)) {
       return res.status(400).send({ status: false, message: "Enter valid data in review and reviewedBy" })
     }
+
     // if (isDeleted == true) {
     //     return res
     //       .status(400)
     //       .send({ status: false, message: "Cannot input isDeleted as true while registering" });
     //   }  
+    if (isDeleted == true) {
+        return res
+          .status(400)
+          .send({ status: false, message: "Cannot input isDeleted as true while registering" });
+      }  
 
     if(!validString(data.rating)) return res.status(400).send({ status: false, message: "Rating should be in numbers" });
     if(!((data.rating < 6) && (data.rating > 0))) return res.status(400).send({ status: false, message: "Rating should be between 1 - 5 numbers" });
 
+
+ 
     data.bookId = bookId;
 
     let reviewData = await reviewModel.create(data) ;
@@ -58,19 +65,18 @@ const addReview = async (req, res) => {
     res.status(500).send({ status: false, error: err.message });
   }
 }
-//---------------PUT /books/:bookId/review/:reviewId
+
+//Update Review
+
 const updateReview = async function (req, res) {
 
-
-
-    try {
-
+ try {
         const bookParams = req.params.bookId
         const reviewParams = req.params.reviewId
-        const requestupadtedBody = req.body
+        const requestupdatedBody = req.body
 
 
-        const { review, rating, reviewedBy } = requestupadtedBody
+        const { review, rating, reviewedBy } = requestupdatedBody
         // validation starts
 
 
@@ -171,5 +177,4 @@ const deleteReview = async function (req, res) {
 }
 
 
-//module.exports.updateReview=updateReview
 module.exports = { addReview,deleteReview,updateReview};

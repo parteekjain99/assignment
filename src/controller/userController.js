@@ -1,24 +1,12 @@
 const jwt=require('jsonwebtoken')
 const userModel = require("../models/userModel")
+const {isValid,isValidRequestBody} = require('../validations/validator')
 
-
-
-
-const isValid = function (value) {
-    if (typeof value === "undefined" || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true;
-}
-
-const isValidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0
-}
-
-
-
-const CreateUser = async function (req, res) {
+//User Registration
+const createUser = async function (req, res) {
     try {
         let user = req.body
+        //extracts params
         let { title, name, email, phone, password } = user
 
         if (!isValidRequestBody(user)) {
@@ -72,6 +60,12 @@ const CreateUser = async function (req, res) {
         }
       
         
+        if (isDeleted == true) {
+            return res
+              .status(400)
+              .send({ status: false, message: "Cannot input isDeleted as true while registering" });
+          } 
+
         const NewUsers = await userModel.create(user)
         return res.status(201).send({ Status: true, msg: "Data sucessfully Created", data: NewUsers })
 
@@ -81,7 +75,7 @@ const CreateUser = async function (req, res) {
     }
 }
 
-
+//User Login
 const userLogin = async function(req,res){
     try {
        const requestBody= req.body;
@@ -135,5 +129,5 @@ const userLogin = async function(req,res){
 }
 
 
-module.exports= {CreateUser,userLogin}
+module.exports= {createUser,userLogin}
 

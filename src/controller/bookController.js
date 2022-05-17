@@ -117,7 +117,6 @@ const getBooks = async function (req, res) {
           return res.status(400).send({ status: false, msg: "userid not valid" })
       }
 
-
       // filtering by query
       const filterdBooks = await bookModel.find({ $and: [{ isDeleted: false }, query] })
           .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1, subcategory: 1 });
@@ -157,7 +156,7 @@ const getBookById = async (req, res) => {
   }
 }
 
-//updateBook
+//UpdateBook
 
 const updateBook = async function (req, res) {
   try {
@@ -178,10 +177,10 @@ const updateBook = async function (req, res) {
               return res.status(400).send({ status: false, message: "This ISBN number already exists with another book" });
           }
           const updatedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { ...data }, { new: true })
-          return res.status(202).send({ status: true, message: "successfull", data: updatedBook })
+          return res.status(201).send({ status: true, message: "successfull", data: updatedBook })
       }
       else {
-          return res.status(404).send({ status: false, message: "please provide required field to update" })
+          return res.status(400).send({ status: false, message: "please provide required field to update" })
       }
   }
   catch (err) {

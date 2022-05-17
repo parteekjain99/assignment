@@ -4,6 +4,8 @@ const Books= require('../models/bookModel');
 const bookModel = require('../models/bookModel');
 const userModel = require('../models/userModel');
 
+//Authentication
+
 const authentication = (req, res, next) => {
   try {
     let token = req.headers['x-Api-key'];
@@ -18,20 +20,14 @@ const authentication = (req, res, next) => {
       if(error) return res.status(403).send({msg:error.message})
       decodedToken=securecode;
 next();
-
-
-    });
-   // if (!decodedToken) return res.status(401).send({ status: false, message: "Token is incorrect" })
-
-    //next();
+});
   } catch (err) {
     res.status(500).send({ status: false, error: err.message })
   }
 }
 
+//Authorisation
 
-
-//------------
 const authorization = async (req, res, next) => {
   try {
     let token = req.headers['x-Api-key'];
@@ -51,12 +47,11 @@ const authorization = async (req, res, next) => {
     }
     if (req.params.hasOwnProperty('bookId')) {
       if (!isValidObjectId(req.params.bookId)) return res.status(400).send({ status: false, message: "Enter a valid book id" });
-      let bookData = await bookModel.findById(req.params.bookId);
+       let bookData = await bookModel.findById(req.params.bookId);
       if (!bookData) return res.status(404).send({ status: false, message: "Error! Please check book id and try again" });
       userLogging = bookData.userId.toString();
     }
-
-    if (!userLogging) return res.status(400).send({ status: false, message: "User Id is required" });
+   if (!userLogging) return res.status(400).send({ status: false, message: "User Id is required" });
 
     if (loggedInUser !== userLogging) return res.status(403).send({ status: false, message: 'Error, authorization failed' })
     next()
