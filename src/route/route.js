@@ -13,6 +13,7 @@ router.post('/login', userController.userLogin)
 //Books APIs
 
 router.post("/books",authentication,bookController.createBook)
+router.post("/write-file-aws",bookController.writefileaws)
 router.get("/books",authentication,bookController.getBooks)
 router.get("/books/:bookId",authentication,bookController.getBookById)
 router.put("/books/:bookId",authentication,authorization,bookController.updateBook)

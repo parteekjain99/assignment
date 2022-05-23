@@ -14,6 +14,9 @@ const bookSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+
+    bookCover: { type: String },
+
     userId: {
         type: ObjectId,
         ref: 'usersdatas',
@@ -28,6 +31,7 @@ const bookSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+
 
     category: {
         type: String,

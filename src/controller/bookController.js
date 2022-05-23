@@ -3,6 +3,44 @@ const userModel= require('../models/userModel')
 const reviewModel = require('../models/reviewModel')
 const bookModel = require('../models/bookModel')
 const{isValidObjectId,isValidRequestBody,isValid} = require('../validations/validator')
+const multer = require('multer');
+const aws = require('aws-sdk');
+
+aws.config.update(
+    {
+        accessKeyId: "AKIAY3L35MCRUJ6WPO6J",
+        secretAccessKey: "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",
+        region: "ap-south-1"
+    }
+)
+
+let uploadFile = async (file) => {
+    return new Promise( function(resolve, reject) {
+        //this function will upload file to aws and return the link
+        let s3 = new aws.S3({ apiVersion: "2006-03-01" }) //we will be using s3 service of aws
+        //  await uploadFile(files[0])
+        var uploadParams = {
+            ACL: "public-read",
+            Bucket: "classroom-training-bucket", // HERE
+            Key: "group-18/" + file.originalname, // HERE 
+            Body: file.buffer
+        }
+        s3.upload(uploadParams, function (err, data) {
+            if (err) { 
+                return reject({ "error": err }) 
+            }
+
+            console.log(data)
+            console.log(" file uploaded succesfully ")
+            return resolve(data.Location) // HERE
+          }
+        )
+
+    
+
+    }
+    )
+}
 
 
 //=================CREATE BOOK =====================================
@@ -106,6 +144,28 @@ const createBook = async (req, res) => {
       return res.status(500).send({ status: false, message: err.message })  
 };
  }
+
+ const writefileaws = async function(req, res){
+
+    try{
+        let files= req.files
+        if(files && files.length>0){
+            //upload to s3 and get the uploaded link
+            // res.send the link back to frontend/postman
+            let uploadedFileURL= await uploadFile( files[0] )
+            res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+        }
+        else{
+            res.status(400).send({ msg: "No file found" })
+        }
+        
+    }
+    catch(err){
+        res.status(500).send({msg: err})
+    }
+    
+}
+
 //--------------------------GET BOOK BY QUERY--------------------------------------------------
 
 const getBooks = async function (req, res) {
@@ -220,6 +280,7 @@ const deleteBooks = async (req, res)=> {
 
 
   module.exports.createBook=createBook
+  module.exports.writefileaws=writefileaws
   module.exports.getBooks = getBooks
   module.exports.getBookById = getBookById
   module.exports.updateBook= updateBook

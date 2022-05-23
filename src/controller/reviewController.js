@@ -23,7 +23,7 @@ const addReview = async (req, res) => {
     if(!checkBookId) return res.status(404).send({ status: false, message: "Book not found" });
 
 
-   if(checkBookId.isDeleted == true) return res.status(404).send({ status: false, message: "Book not found or might have been deleted" })
+    if(checkBookId.isDeleted == true) return res.status(404).send({ status: false, message: "Book not found or might have been deleted" })
 
    
     if(!data.rating) return res.status(400).send({ status: false, message: "Rating is required and should not be 0" });
@@ -35,18 +35,7 @@ const addReview = async (req, res) => {
     if (validString(data.reviewedBy) || validString(data.review)) {
       return res.status(400).send({ status: false, message: "Enter valid data in review and reviewedBy" })
     }
-
-    // if (isDeleted == true) {
-    //     return res
-    //       .status(400)
-    //       .send({ status: false, message: "Cannot input isDeleted as true while registering" });
-    //   }  
-    if (isDeleted == true) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Cannot input isDeleted as true while registering" });
-      }  
-
+ 
     if(!validString(data.rating)) return res.status(400).send({ status: false, message: "Rating should be in numbers" });
     if(!((data.rating < 6) && (data.rating > 0))) return res.status(400).send({ status: false, message: "Rating should be between 1 - 5 numbers" });
 

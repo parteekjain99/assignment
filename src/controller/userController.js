@@ -59,12 +59,6 @@ const createUser = async function (req, res) {
             return res.status(400).send({status: false, msg: "password length Min.8 - Max. 15" })
         }
       
-        
-        if (isDeleted == true) {
-            return res
-              .status(400)
-              .send({ status: false, message: "Cannot input isDeleted as true while registering" });
-          } 
 
         const NewUsers = await userModel.create(user)
         return res.status(201).send({ Status: true, msg: "Data sucessfully Created", data: NewUsers })
@@ -94,7 +88,7 @@ const userLogin = async function(req,res){
        }
        
        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))){
-           res.status(400).send({status:false, message: `Emaiul should be a valid email address`})
+           res.status(400).send({status:false, message: `Email should be a valid email address`})
            return
        }
 
